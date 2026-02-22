@@ -4,4 +4,4 @@ Steven Maddox Batz - Backend Developer
 Ethan Schultz - Developer
 
 --- Potential Roles
-Project Manager, Backend Developer (Flask & MySql), Frontend Developer (HTML, CSS, JavaScript)
+IU Designer,Project Manager, Backend Developer (Flask & MySql), Frontend Developer (HTML, CSS, JavaScript)
