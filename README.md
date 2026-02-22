@@ -1,10 +1,12 @@
 # Ctrl-Alt-Budget
 
-A budgeting application built using Python, Flask, and MySql.
+A statistics driven web app focused on financial analysis and budgeting. 
 
-## Description
+## Overview
 
-A web-based budgeting app aimed to help users track income, manage expenses, set financial goals, and gain useful insight into their finances.
+This project is a web-based budgeting application designed to help users track income, manage expenses and monitor financial goals through a clean and user friendly interface. The application enable individual and small business owner to organize their finances, gain insights into spending habits and make informed budgeting decisions.
+
+Built using Python, Flask, and MySQL, the system follows a structured backend with secure user authentication, data storage, and graph creation.
 
 ## Planned Features
 
@@ -15,3 +17,17 @@ A web-based budgeting app aimed to help users track income, manage expenses, set
 * Spending Dashboard with overview of current months spending
 * Data Visualization
 * Export Reports
+
+## Tech Stack 
+
+Frontend
+* HTML5
+* CSS3
+* JavaScript
+
+Backend
+* Python
+* Flask
+
+Database
+* MySQL
