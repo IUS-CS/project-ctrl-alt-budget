@@ -1,0 +1,19 @@
+import { expect, test } from "vitest";
+
+function calcTotals(transactions) {
+  let income = 0;
+  let expenses = 0;
+  for (const t of transactions) {
+    if (t.type === "INCOME") income += t.amount;
+    else expenses += t.amount;
+  }
+  return { income, expenses, balance: income - expenses };
+}
+
+test("calcTotals computes income, expenses, balance", () => {
+  const txs = [
+    { type: "INCOME", amount: 100 },
+    { type: "EXPENSE", amount: 40 }
+  ];
+  expect(calcTotals(txs)).toEqual({ income: 100, expenses: 40, balance: 60 });
+});
