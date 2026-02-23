@@ -1,0 +1,87 @@
+const txs = [];
+
+const dateEl = document.getElementById("date");
+const descEl = document.getElementById("desc");
+const catEl = document.getElementById("category");
+const typeEl = document.getElementById("type");
+const amountEl = document.getElementById("amount");
+const msgEl = document.getElementById("msg");
+
+const rowsEl = document.getElementById("rows");
+const incomeEl = document.getElementById("income");
+const expensesEl = document.getElementById("expenses");
+const balanceEl = document.getElementById("balance");
+
+document.getElementById("addBtn").addEventListener("click", addTx);
+
+dateEl.valueAsDate = new Date();
+
+function addTx() {
+  msgEl.textContent = "";
+
+  const date = dateEl.value;
+  const desc = (descEl.value || "").trim();
+  const category = catEl.value;
+  const type = typeEl.value;
+  const amount = Number(amountEl.value);
+
+  if (!date) return setMsg("Pick a date.");
+  if (!desc) return setMsg("Description is required.");
+  if (!Number.isFinite(amount) || amount <= 0) return setMsg("Amount must be greater than 0.");
+
+  txs.push({ date, desc, category, type, amount });
+  descEl.value = "";
+  amountEl.value = "";
+
+  render();
+}
+
+function removeTx(index) {
+  txs.splice(index, 1);
+  render();
+}
+
+function render() {
+  rowsEl.innerHTML = "";
+
+  let income = 0;
+  let expenses = 0;
+
+  txs.forEach((t, i) => {
+    if (t.type === "INCOME") income += t.amount;
+    else expenses += t.amount;
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${escapeHtml(t.date)}</td>
+      <td>${escapeHtml(t.desc)}</td>
+      <td>${escapeHtml(t.category)}</td>
+      <td>${escapeHtml(t.type)}</td>
+      <td class="right">$${t.amount.toFixed(2)}</td>
+      <td class="right"><button class="smallBtn" type="button">Delete</button></td>
+    `;
+
+    tr.querySelector("button").addEventListener("click", () => removeTx(i));
+    rowsEl.appendChild(tr);
+  });
+
+  const balance = income - expenses;
+
+  incomeEl.textContent = `$${income.toFixed(2)}`;
+  expensesEl.textContent = `$${expenses.toFixed(2)}`;
+  balanceEl.textContent = `$${balance.toFixed(2)}`;
+}
+
+function setMsg(text) {
+  msgEl.textContent = text;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
