@@ -5,7 +5,7 @@ PIP = $(VENV)/bin/pip
 
 # Environment Setup
 setup:
-	python -m venv $(VENV)
+	python3 -m venv $(VENV)
 	$(PIP) install -r requirements.txt
 
 # Run Server
