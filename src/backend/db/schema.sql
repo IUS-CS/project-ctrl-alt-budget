@@ -1,3 +1,22 @@
+/*
+NOTES:
+-- temporarily droping tables for development
+-- temporary place holder ENUM values for account_type, goal_status, category_type, frequency, and transaction_type
+-- foreign keys like category_id and bill_id can be NULL (transactions and bills do not have to be associated with categories for example)
+-- is_active BOOLEAN defaults to true
+-- goals(target_date) left nullable (optional field)
+
+CHANGES FROM ERD:
+-- creation_date DATE -> created_at TIMESTAMP
+-- color CHAR or ENUM -> I chose CHAR(7) for the time being which stores color hex codes
+-- renamed status and type because they are reserved words
+
+DISCUSS:
+-- which fields should be nullable/default to a certain value
+-- actual types/statuses/etc for ENUMS
+
+*/
+
 CREATE DATABASE IF NOT EXISTS `ctrl-alt-budget`;
 USE `ctrl-alt-budget`;
 
@@ -16,7 +35,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Note: TEMPORARY ENUM types for account_type
 CREATE TABLE IF NOT EXISTS accounts (
     account_id CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
     user_id CHAR(36) NOT NULL,
