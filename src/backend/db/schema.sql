@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `ctrl-alt-budget`;
 USE `ctrl-alt-budget`;
 
+DROP TABLE IF EXISTS bills;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS goals;
 DROP TABLE IF EXISTS accounts;
@@ -47,4 +48,19 @@ CREATE TABLE IF NOT EXISTS categories (
     category_name VARCHAR(50) NOT NULL,
     category_type ENUM('type1', 'type2') NOT NULL,
     color CHAR(7) DEFAULT '#ffffff'
+);
+
+CREATE TABLE IF NOT EXISTS bills (
+    bill_id CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
+    user_id CHAR(36) NOT NULL,
+    account_id CHAR(36) NOT NULL,
+    category_id CHAR(36) DEFAULT NULL,
+    CONSTRAINT fk_bills_users FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT fk_bills_accounts FOREIGN KEY (account_id) REFERENCES accounts(account_id),
+    CONSTRAINT fk_bills_categories FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    bill_name VARCHAR(50) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    frequency ENUM('frequency1', 'frequency2') NOT NULL,
+    next_due_date DATE NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
