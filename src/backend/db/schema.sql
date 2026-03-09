@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `ctrl-alt-budget`;
 USE `ctrl-alt-budget`;
 
+DROP TABLE IF EXISTS transactions;
 DROP TABLE IF EXISTS bills;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS goals;
@@ -12,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     display_name VARCHAR(50) NOT NULL,
-    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Note: TEMPORARY ENUM types for account_type
@@ -23,7 +24,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     account_name VARCHAR(50) NOT NULL,
     account_type ENUM('type1', 'type2') NOT NULL,
     balance DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
-    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS goals (
@@ -63,4 +64,19 @@ CREATE TABLE IF NOT EXISTS bills (
     frequency ENUM('frequency1', 'frequency2') NOT NULL,
     next_due_date DATE NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS transactions (
+    transaction_id CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
+    account_id CHAR(36) NOT NULL,
+    category_id CHAR(36) DEFAULT NULL,
+    bill_id CHAR(36) DEFAULT NULL,
+    CONSTRAINT fk_transactions_accounts FOREIGN KEY (account_id) REFERENCES accounts(account_id),
+    CONSTRAINT fk_transactions_categories FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    CONSTRAINT fk_transactions_bills FOREIGN KEY (bill_id) REFERENCES bills(bill_id),
+    amount DECIMAL(15,2) NOT NULL,
+    transaction_description TEXT,
+    transaction_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    transaction_type ENUM('type1', 'type2') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
