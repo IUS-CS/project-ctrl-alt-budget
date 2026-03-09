@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `ctrl-alt-budget`;
 USE `ctrl-alt-budget`;
 
+DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS goals;
 DROP TABLE IF EXISTS accounts;
 DROP TABLE IF EXISTS users;
@@ -35,4 +36,15 @@ CREATE TABLE IF NOT EXISTS goals (
     current_amount DECIMAL(15,2) NOT NULL DEFAULT 0.00,
     target_date DATE,
     goal_status ENUM('status1', 'status2') NOT NULL DEFAULT 'status1'
+);
+
+CREATE TABLE IF NOT EXISTS categories (
+    category_id CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
+    user_id CHAR(36) NOT NULL,
+    parent_id CHAR(36) DEFAULT NULL,
+    CONSTRAINT fk_categories_users FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT fk_categories_categories FOREIGN KEY (parent_id) REFERENCES categories(category_id),
+    category_name VARCHAR(50) NOT NULL,
+    category_type ENUM('type1', 'type2') NOT NULL,
+    color CHAR(7) DEFAULT '#ffffff'
 );
