@@ -13,11 +13,11 @@ run:
 	$(PYTHON) run.py
 # Testing
 test:
-	$(PYTHON) -m pytest
+	$(PYTHON) -m pytest tests/ -v
 
 # Linting (Need future filenames to work)
 lint:
-	$(PYTHON) -m pylint run.py
+	$(PYTHON) -m pylint app/ run.py
 
 # Data Cleaning
 clean:
