@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS categories (
     category_name VARCHAR(50) NOT NULL,
     category_type ENUM('income', 'expense') NOT NULL,
     color ENUM('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'teal', 'gray') NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS bills (
     bill_id CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
