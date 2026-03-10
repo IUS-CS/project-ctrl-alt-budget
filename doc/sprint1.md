@@ -26,7 +26,7 @@ This sprint, we completed :
  
   ### Bad
 We need to imporve on compunication and starting tasks earlier in the sprint
-We need more participation from Thomas now that he is active again 
+
 
   ### Actionable Commitments
 
