@@ -12,8 +12,8 @@ CHANGES FROM ERD:
 
 */
 
-CREATE DATABASE IF NOT EXISTS `ctrl-alt-budget`;
-USE `ctrl-alt-budget`;
+CREATE DATABASE IF NOT EXISTS `ctrl_alt_budget`;
+USE `ctrl_alt_budget`;
 
 DROP TABLE IF EXISTS transactions;
 DROP TABLE IF EXISTS bills;
