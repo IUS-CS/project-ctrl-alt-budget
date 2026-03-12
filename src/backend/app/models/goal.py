@@ -8,12 +8,12 @@ from .enums import GoalStatus
 
 @dataclass
 class Goal:
-    user_id: UUID
-    title: str
+    user_id: UUID       # Links goal to its owner
+    title: str      # Display name for goal
     target_amount: Decimal
     current_amount: Decimal = Decimal("0.00")
-    account_id: Optional[UUID] = None
-    target_date: Optional[date] = None
+    account_id: Optional[UUID] = None   # Optional account linked to goal
+    target_date: Optional[date] = None  # Optional deadline for reaching goal
     status: GoalStatus = GoalStatus.ACTIVE
     goal_id: UUID = field(default_factory=uuid4)
     creation_date: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
@@ -27,6 +27,7 @@ class Goal:
         return float(self.current_amount / self.target_amount * 100)
     
     # Calculate Remaining 
+    # Returns 0 if goal is exceeded
     @property 
     def remaining(self) -> Decimal:
         return max(Decimal("0.00"), self.target_amount - self.current_amount)
