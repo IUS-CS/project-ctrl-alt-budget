@@ -1,15 +1,15 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from flask_login import LoginManager
 from .config import Config
 
 db = SQLAlchemy()
-
-# handle user sessions -- tracking who is logged in
 login_manager = LoginManager()
+login_manager.login_view = "auth.login"
+login_manager.login_message = "Please log in to continue."
+login_manager.login_message_category = "warning"
 
-# redirects to login if not authenticated
-login_manager.login_view = 'auth.login'  
 
 def create_app():
     # Creates and configures the Flask app
@@ -29,14 +29,26 @@ def create_app():
     login_manager.init_app(app)
 
     # Import and register blueprints
-    from ..routes.auth import auth_bp
-    from ..routes.main import main_bp
-    from ..routes.dashboard import dashboard_bp
-    from ..routes.expenses import expenses_bp
+    from routes.auth import auth_bp
+    from routes.main import main_bp
+    from routes.dashboard import dashboard_bp
+    from routes.expenses import expenses_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(expenses_bp)
+
+    with app.app_context():
+        db.session.execute(text("""
+            CREATE TABLE IF NOT EXISTS users (
+                user_id TEXT PRIMARY KEY,
+                email TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
+                display_name TEXT
+            )
+        """))
+        db.session.commit()
+
 
     return app

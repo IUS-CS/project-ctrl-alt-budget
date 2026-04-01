@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .auth-wrapper { max-width: 480px; margin: 60px auto; padding: 30px; background: white; border: 1px solid #eee; border-radius: 12px; }
+        .auth-wrapper h1 { margin-bottom: 10px; }
+        .auth-wrapper p { color: var(--text-light); margin-bottom: 20px; }
+        .auth-form label { display: block; margin-bottom: 6px; font-weight: 600; }
+        .auth-form input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 8px; }
+        .auth-submit { width: 100%; padding: 12px; border: none; border-radius: 999px; background: var(--accent-color); color: white; font-weight: bold; cursor: pointer; }
+        .flash { padding: 12px; margin-bottom: 16px; border-radius: 8px; }
+        .flash-success { background: #e7f7ed; color: #1b5e20; }
+        .flash-danger { background: #fdecec; color: #8a1c1c; }
+        .flash-warning { background: #fff4db; color: #7a5600; }
+        .flash-info { background: #eaf4ff; color: #0f4c81; }
+        .auth-links { margin-top: 15px; text-align: center; }
+    </style>
+</head>
+<body>
+    <header class="navBar">
+        <div class="logo">Build Your Budget</div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+        </nav>
+    </header>
+
+    <main class="auth-wrapper">
+        <h1>Create Account</h1>
+        <p>Make a new account to start tracking your budget.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="auth-form">
+            <label for="display_name">Display Name</label>
+            <input type="text" id="display_name" name="display_name">
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+
+            <button type="submit" class="auth-submit">Create Account</button>
+        </form>
+
+        <div class="auth-links">
+            <p>Already have an account? <a href="/login">Login here</a>.</p>
+        </div>
+    </main>
+</body>
+</html>
