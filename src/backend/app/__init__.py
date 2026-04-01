@@ -2,8 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from .config import Config
-
-db = SQLAlchemy()
+from .extensions import db
+from src.backend.app.models import User, Account, Category, Goal, Bill, Transaction
 
 # handle user sessions -- tracking who is logged in
 login_manager = LoginManager()
@@ -11,7 +11,7 @@ login_manager = LoginManager()
 # redirects to login if not authenticated
 login_manager.login_view = 'auth.login'  
 
-def create_app():
+def create_app(test_config=None):
     # Creates and configures the Flask app
 
     app = Flask(__name__,
@@ -21,12 +21,24 @@ def create_app():
         static_folder='../../frontend/static'
     )
 
-    # Loads in all settings from Config class in config.py
-    app.config.from_object(Config)
+    if test_config is None:
+        # Load the normal MySQL config from config.py
+        app.config.from_object(Config)
+    else:
+        # Load the test settings (SQLite) instead
+        app.config.update(test_config)
 
     # Initializes SQLAlchemy and Flask-Login with app 
     db.init_app(app)
-    login_manager.init_app(app)
+
+    # CLI command to initialize the database
+    @app.cli.command("init-db")
+    def init_db():
+        db.create_all()
+        print("Database tables created.")
+
+    # TEMP COMMENT OUT
+    # login_manager.init_app(app)
 
     # Import and register blueprints
     from ..routes.auth import auth_bp

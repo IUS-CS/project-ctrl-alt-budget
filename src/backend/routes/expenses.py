@@ -10,20 +10,20 @@ transactions = [
 ]
 
 # GET /expenses — renders the expenses page template
-@app.route("/expenses")
+@expenses_bp.route("/expenses")
 def expenses():
     return render_template("expenses.html")
 
 # GET /api/transactions — returns all transactions as JSON
 # To be used by the frontend to fetch and display the transaction list
-@app.route("/api/transactions", methods=["GET"])
+@expenses_bp.route("/api/transactions", methods=["GET"])
 def get_transactions():
     return jsonify(transactions)
 
 
 # Unfinished -- Needs integrated with transaction class
 # POST -- adds a new transaction to list
-@app.route("/api/transactions", methods=["POST"])
+@expenses_bp.route("/api/transactions", methods=["POST"])
 def add_transaction():
     data = request.get_json()
 

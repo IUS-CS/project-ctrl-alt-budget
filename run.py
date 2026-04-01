@@ -1,6 +1,6 @@
 # Flask app entry point 
 # In the future we should be able to do python run.py or make run to bootup the app
-from app import create_app, db
+from src.backend.app import create_app, db
 
 # Creates the Flask app using the create_app() function in app/app__init__.py
 app = create_app()

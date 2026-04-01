@@ -1,19 +1,23 @@
-from __future__ import annotations
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from decimal import Decimal
-from typing import Optional
-from uuid import UUID, uuid4
-from .enums import TransactionType
+import uuid
+from sqlalchemy.sql import func
+from src.backend.app.extensions import db
+from src.backend.app.models.enums import TransactionType
 
 
-@dataclass
-class Transaction:
-    account_id: UUID        # The account this transaction belongs to 
-    amount: Decimal         # Transaction amount - negaive = expense, positive = income or transfer
-    type: TransactionType
-    category_id:     Optional[UUID]   = None    # Optional for organizing transactions
-    bill_id:         Optional[UUID]   = None    # Optional for recurring bill
-    description:     Optional[str]    = None    # Optional note for transaction
-    transaction_id: UUID = field(default_factory=uuid4)
-    creation_date: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+class Transaction(db.Model):
+    __tablename__ = 'transactions'
+
+    transaction_id          = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    account_id              = db.Column(db.String(36), db.ForeignKey('accounts.account_id'), nullable=False)
+    category_id             = db.Column(db.String(36), db.ForeignKey('categories.category_id'), default=None)
+    bill_id                 = db.Column(db.String(36), db.ForeignKey('bills.bill_id'), default=None)
+    amount                  = db.Column(db.Numeric(15, 2), nullable=False)
+    transaction_description = db.Column(db.Text, default=None)
+    transaction_date        = db.Column(db.Date, nullable=False, server_default=func.current_date())
+    transaction_type        = db.Column(db.Enum(TransactionType), nullable=False)
+    created_at              = db.Column(db.DateTime, server_default=func.now())
+
+    # Relationships
+    account  = db.relationship('Account', back_populates='transactions')
+    category = db.relationship('Category', back_populates='transactions')
+    bill     = db.relationship('Bill', back_populates='transactions')
