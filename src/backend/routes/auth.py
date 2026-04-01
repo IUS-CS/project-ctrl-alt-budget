@@ -4,11 +4,11 @@ from flask import Blueprint
 auth_bp = Blueprint('auth', __name__)
 
 # GET /login - shows the login page
-@app.route("/login")
+@auth_bp.route("/login")
 def login():
     return "<h1>Login page coming soon</h1>"
 
 # Get /signup - shows signup page
-@app.route("/signup")
+@auth_bp.route("/signup")
 def signup():
     return "<h1>Signup page coming soon</h1>"

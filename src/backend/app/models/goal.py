@@ -1,34 +1,38 @@
-from __future__ import annotations
-from dataclasses import dataclass, field
-from datetime import datetime, date, timezone
+import uuid
 from decimal import Decimal
-from typing import Optional
-from uuid import UUID, uuid4
-from .enums import GoalStatus
+from sqlalchemy.sql import func
+from src.backend.app.extensions import db
+from src.backend.app.models.enums import GoalStatus
 
-@dataclass
-class Goal:
-    user_id: UUID       # Links goal to its owner
-    title: str      # Display name for goal
-    target_amount: Decimal
-    current_amount: Decimal = Decimal("0.00")
-    account_id: Optional[UUID] = None   # Optional account linked to goal
-    target_date: Optional[date] = None  # Optional deadline for reaching goal
-    status: GoalStatus = GoalStatus.ACTIVE
-    goal_id: UUID = field(default_factory=uuid4)
-    creation_date: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
-    # Methods for mutation and retrieval
-    # Calculate Progress Percentage
-    @property 
+class Goal(db.Model):
+    __tablename__ = 'goals'
+
+    goal_id        = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id        = db.Column(db.String(36), db.ForeignKey('users.user_id'), nullable=False)
+    account_id     = db.Column(db.String(36), db.ForeignKey('accounts.account_id'), default=None)
+    title          = db.Column(db.String(255), nullable=False)
+    target_amount  = db.Column(db.Numeric(15, 2), nullable=False)
+    current_amount = db.Column(db.Numeric(15, 2), nullable=False, default=Decimal("0.00"))
+    target_date    = db.Column(db.Date, default=None)
+    goal_status    = db.Column(db.Enum(GoalStatus), nullable=False, default=GoalStatus.ACTIVE)
+    created_at     = db.Column(db.DateTime, nullable=False, server_default=func.now())
+
+    # Relationships
+    user    = db.relationship('User', back_populates='goals')
+    account = db.relationship('Account', back_populates='goals')
+
+    # ── Computed properties ────────────────────────────────────────────────
+
+    @property
     def progress_pct(self) -> float:
-        if self.target_amount == 0:
+        """Percentage of goal completed (0.0 – 100.0)."""
+        if not self.target_amount or self.target_amount == 0:
             return 0.0
         return float(self.current_amount / self.target_amount * 100)
-    
-    # Calculate Remaining 
-    # Returns 0 if goal is exceeded
-    @property 
+
+    @property
     def remaining(self) -> Decimal:
-        return max(Decimal("0.00"), self.target_amount - self.current_amount)
-    
+        """Amount still needed; never goes below zero."""
+        diff = self.target_amount - self.current_amount
+        return max(Decimal("0.00"), diff)
