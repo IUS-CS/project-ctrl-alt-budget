@@ -11,7 +11,9 @@ class Config:
     # DB connection for SQLAlchemy, uses a default local connection if not set in .env
     SQLALCHEMY_DATABASE_URI =( 
         os.environ.get('DATABASE_URL') or 
-        'mysql+pymysql://root:password@localhost/ctrl_alt_budget'                       
+        # 'mysql+pymysql://root:password@localhost/ctrl_alt_budget' 
+        'sqlite:///ctrl_alt_budget.db'  
+        #sqlite for testing                     
     )
 
     # Enables Flask debug mode - shows detailed error pages and auto reloads
