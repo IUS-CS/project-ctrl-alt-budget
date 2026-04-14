@@ -9,7 +9,8 @@ exceptiongroup==1.3.1
 Flask==3.1.3
 Flask-Login==0.6.3
 Flask-SQLAlchemy==3.1.1
-greenlet==3.3.2
+# greenlet==3.2.5
+# Commented out for now because it was failing to build on Windows and is not needed for current Flask auth work.
 importlib_metadata==8.7.1
 iniconfig==2.3.0
 isort==6.1.0

@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request
+from flask_login import login_required
 
 expenses_bp = Blueprint('expenses', __name__)
 
@@ -11,12 +12,14 @@ transactions = [
 
 # GET /expenses — renders the expenses page template
 @expenses_bp.route("/expenses")
+@login_required
 def expenses():
     return render_template("expenses.html")
 
 # GET /api/transactions — returns all transactions as JSON
 # To be used by the frontend to fetch and display the transaction list
 @expenses_bp.route("/api/transactions", methods=["GET"])
+@login_required
 def get_transactions():
     return jsonify(transactions)
 
@@ -24,6 +27,7 @@ def get_transactions():
 # Unfinished -- Needs integrated with transaction class
 # POST -- adds a new transaction to list
 @expenses_bp.route("/api/transactions", methods=["POST"])
+@login_required
 def add_transaction():
     data = request.get_json()
 

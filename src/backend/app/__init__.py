@@ -1,17 +1,17 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from flask_login import LoginManager
 from .config import Config
-from .extensions import db
-from src.backend.app.models import User, Account, Category, Goal, Bill, Transaction
 
-# handle user sessions -- tracking who is logged in
+db = SQLAlchemy()
 login_manager = LoginManager()
+login_manager.login_view = "auth.login"
+login_manager.login_message = "Please log in to continue."
+login_manager.login_message_category = "warning"
 
-# redirects to login if not authenticated
-login_manager.login_view = 'auth.login'  
 
-def create_app(test_config=None):
+def create_app():
     # Creates and configures the Flask app
 
     app = Flask(__name__,
@@ -28,8 +28,6 @@ def create_app(test_config=None):
         # Load the test settings (SQLite) instead
         app.config.update(test_config)
 
-    # Initializes SQLAlchemy and Flask-Login with app 
-    db.init_app(app)
 
     # CLI command to initialize the database
     @app.cli.command("init-db")
@@ -37,18 +35,33 @@ def create_app(test_config=None):
         db.create_all()
         print("Database tables created.")
 
-    # TEMP COMMENT OUT
-    # login_manager.init_app(app)
+
+
+    # Initializes SQLAlchemy and Flask-Login with app 
+    db.init_app(app)
+    login_manager.init_app(app)
 
     # Import and register blueprints
-    from ..routes.auth import auth_bp
-    from ..routes.main import main_bp
-    from ..routes.dashboard import dashboard_bp
-    from ..routes.expenses import expenses_bp
+    from routes.auth import auth_bp
+    from routes.main import main_bp
+    from routes.dashboard import dashboard_bp
+    from routes.expenses import expenses_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(expenses_bp)
+
+    with app.app_context():
+        db.session.execute(text("""
+            CREATE TABLE IF NOT EXISTS users (
+                user_id TEXT PRIMARY KEY,
+                email TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
+                display_name TEXT
+            )
+        """))
+        db.session.commit()
+
 
     return app
