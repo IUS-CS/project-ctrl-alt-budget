@@ -3,19 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import UserMixin, login_user, logout_user
 from sqlalchemy import text
 from werkzeug.security import check_password_hash, generate_password_hash
-from app import db, login_manager
-
-# Blueprint groups all authentication related routes together
-auth_bp = Blueprint('auth', __name__)
-
-from uuid import uuid4
-
-from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import UserMixin, login_user, logout_user
-from sqlalchemy import text
-from werkzeug.security import check_password_hash, generate_password_hash
-
-from app import db, login_manager
+from ..app.extensions import db, login_manager
 
 auth_bp = Blueprint("auth", __name__)
 
