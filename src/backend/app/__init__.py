@@ -21,8 +21,21 @@ def create_app():
         static_folder='../../frontend/static'
     )
 
-    # Loads in all settings from Config class in config.py
-    app.config.from_object(Config)
+    if test_config is None:
+        # Load the normal MySQL config from config.py
+        app.config.from_object(Config)
+    else:
+        # Load the test settings (SQLite) instead
+        app.config.update(test_config)
+
+
+    # CLI command to initialize the database
+    @app.cli.command("init-db")
+    def init_db():
+        db.create_all()
+        print("Database tables created.")
+
+
 
     # Initializes SQLAlchemy and Flask-Login with app 
     db.init_app(app)
