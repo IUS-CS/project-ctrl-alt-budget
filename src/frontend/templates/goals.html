@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goals</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff7ed;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 750px;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #ea580c;
+      color: white;
+      border: none;
+    }
+
+    li {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Financial Goals</h1>
+    <input type="text" id="goalName" placeholder="Goal name" />
+    <input type="number" id="goalTarget" placeholder="Target amount" />
+    <button onclick="addGoal()">Add Goal</button>
+
+    <ul id="goalList"></ul>
+  </div>
+
+  <script>
+    function addGoal() {
+      const name = document.getElementById("goalName").value;
+      const target = document.getElementById("goalTarget").value;
+
+      if (!name || target <= 0) {
+        alert("Enter valid goal details.");
+        return;
+      }
+
+      const li = document.createElement("li");
+      li.textContent = `${name} - Target: $${Number(target).toFixed(2)}`;
+      document.getElementById("goalList").appendChild(li);
+
+      document.getElementById("goalName").value = "";
+      document.getElementById("goalTarget").value = "";
+    }
+  </script>
+</body>
+</html>
