@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Income</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    ul {
+      margin-top: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Income Tracker</h1>
+    <input type="text" id="incomeSource" placeholder="Income source" />
+    <input type="number" id="incomeAmount" placeholder="Income amount" />
+    <button onclick="addIncome()">Add Income</button>
+
+    <h2>Total Income: $<span id="totalIncome">0</span></h2>
+    <ul id="incomeList"></ul>
+  </div>
+
+  <script>
+    let totalIncome = 0;
+
+    function addIncome() {
+      const source = document.getElementById("incomeSource").value;
+      const amount = Number(document.getElementById("incomeAmount").value);
+
+      if (!source || amount <= 0) {
+        alert("Enter valid income details.");
+        return;
+      }
+
+      totalIncome += amount;
+      document.getElementById("totalIncome").textContent = totalIncome.toFixed(2);
+
+      const li = document.createElement("li");
+      li.textContent = `${source}: $${amount.toFixed(2)}`;
+      document.getElementById("incomeList").appendChild(li);
+
+      document.getElementById("incomeSource").value = "";
+      document.getElementById("incomeAmount").value = "";
+    }
+  </script>
+</body>
+</html>
