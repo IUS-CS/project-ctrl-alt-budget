@@ -1,5 +1,4 @@
 from uuid import uuid4
-
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import UserMixin, login_user, logout_user
 from sqlalchemy import text
