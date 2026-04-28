@@ -2,6 +2,15 @@ from flask import Flask
 from .config import Config
 from .extensions import db, login_manager
 
+db = SQLAlchemy()
+login_manager = LoginManager()
+login_manager.login_view = "auth.login"
+login_manager.login_message = "Please log in to continue."
+login_manager.login_message_category = "warning"
+
+
+def create_app(test_config=None):
+    # Creates and configures the Flask app
 
 def create_app(test_config=None):
     app = Flask(__name__,
@@ -28,10 +37,10 @@ def create_app(test_config=None):
         print("Database tables created.")
 
     # Import and register blueprints
-    from ..routes.auth import auth_bp
-    from ..routes.main import main_bp
-    from ..routes.dashboard import dashboard_bp
-    from ..routes.expenses import expenses_bp
+    from src.backend.routes.auth import auth_bp
+    from src.backend.routes.main import main_bp
+    from src.backend.routes.dashboard import dashboard_bp
+    from src.backend.routes.expenses import expenses_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
