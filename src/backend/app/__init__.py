@@ -11,7 +11,7 @@ login_manager.login_message = "Please log in to continue."
 login_manager.login_message_category = "warning"
 
 
-def create_app():
+def create_app(test_config=None):
     # Creates and configures the Flask app
 
     app = Flask(__name__,
@@ -42,10 +42,10 @@ def create_app():
     login_manager.init_app(app)
 
     # Import and register blueprints
-    from routes.auth import auth_bp
-    from routes.main import main_bp
-    from routes.dashboard import dashboard_bp
-    from routes.expenses import expenses_bp
+    from src.backend.routes.auth import auth_bp
+    from src.backend.routes.main import main_bp
+    from src.backend.routes.dashboard import dashboard_bp
+    from src.backend.routes.expenses import expenses_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
