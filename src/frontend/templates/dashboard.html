@@ -80,12 +80,11 @@
     </form>
 
     <hr />
-
+</div>
    
 
   <div class="dashboard-card">
     <h2>Recent Transactions</h2>
-
     <div class="table-responsive">
       <table class="transaction-table">
         <thead>
@@ -94,6 +93,7 @@
             <th>Description</th>
             <th>Type</th>
             <th>Amount</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody id="rows"></tbody>
@@ -108,10 +108,13 @@
     // - Uses mock data now
     // - Shows planned fetch() calls for the real backend later
 
-    const mockTxs = [
-      { date: "2026-02-20", desc: "Paycheck", type: "INCOME", amount: 1500 },
-      
-    ];
+    let mockTxs = JSON.parse(localStorage.getItem("budgetTransactions")) || [
+  
+];
+
+function saveTransactions() {
+  localStorage.setItem("budgetTransactions", JSON.stringify(mockTxs));
+}
 
     const rowsEl = document.getElementById("rows");
     const incomeEl = document.getElementById("incomeTotal");
@@ -148,12 +151,13 @@
 
       // For prototype: just show it worked and add to mock list.
       mockTxs.unshift(tx);
+      saveTransactions();
       render(mockTxs);
 
       e.target.reset();
       document.getElementById("date").valueAsDate = new Date();
       document.getElementById("type").value = "EXPENSE";
-      msgEl.textContent = "Prototype submit: added to mock list (no DB yet).";
+      
     });
 
     function render(txs) {
@@ -162,24 +166,39 @@
       let income = 0;
       let expenses = 0;
 
-      for (const t of txs) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(t.date)}</td>
-          <td>${escapeHtml(t.desc)}</td>
-          <td>${escapeHtml(t.type)}</td>
-          <td class="text-end">$${Number(t.amount).toFixed(2)}</td>
-        `;
-        rowsEl.appendChild(tr);
+     txs.forEach((t, index) => {
+      const tr = document.createElement("tr");
 
-        if (t.type === "INCOME") income += Number(t.amount);
-        else expenses += Number(t.amount);
-      }
+       tr.innerHTML = `
+        <td>${escapeHtml(t.date)}</td>
+        <td>${escapeHtml(t.desc)}</td>
+        <td>${escapeHtml(t.type)}</td>
+        <td>$${Number(t.amount).toFixed(2)}</td>
+        <td>
+          <button type="button" class="small-danger-button" onclick="deleteTransaction(${index})">
+            Delete
+      </button>
+    </td>
+  `;
+
+  rowsEl.appendChild(tr);
+
+  if (t.type === "INCOME") {
+    income += Number(t.amount);
+  } else {
+    expenses += Number(t.amount);
+  }
+});
 
       const balance = income - expenses;
       incomeEl.textContent = `$${income.toFixed(2)}`;
       expenseEl.textContent = `$${expenses.toFixed(2)}`;
       balanceEl.textContent = `$${balance.toFixed(2)}`;
+    }
+    function deleteTransaction(index) {
+      mockTxs.splice(index, 1);
+      saveTransactions();
+      render(mockTxs);
     }
 
     function escapeHtml(s) {

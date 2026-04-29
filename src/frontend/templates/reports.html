@@ -4,50 +4,200 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reports</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f3ff;
-      margin: 0;
-      padding: 0;
-    }
 
-    .container {
-      width: 90%;
-      max-width: 850px;
-      margin: 40px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .card {
-      background: #ede9fe;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 15px;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-  <div class="container">
-    <h1>Budget Reports</h1>
+  <header class="navBar">
+    <div class="logo">Build Your Budget</div>
+    <nav>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/goals">Goals</a>
+      <a href="/reports">Reports</a>
+      <a href="/logout">Logout</a>
+    </nav>
+  </header>
 
-    <div class="card">
-      <h3>Monthly Spending</h3>
-      <p>$1,250</p>
+  <main class="dashboard-container">
+
+    <div class="dashboard-header">
+      <h1>Budget Reports</h1>
+      <p>View a simple summary of transactions, savings goals, and overall progress.</p>
     </div>
 
-    <div class="card">
-      <h3>Monthly Income</h3>
-      <p>$2,400</p>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <p>Total Income</p>
+        <h2 id="reportIncome">$0.00</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Total Expenses</p>
+        <h2 id="reportExpenses">$0.00</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Balance</p>
+        <h2 id="reportBalance">$0.00</h2>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>Total Saved</h3>
-      <p>$1,150</p>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <p>Total Goals</p>
+        <h2 id="reportTotalGoals">0</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Completed Goals</p>
+        <h2 id="reportCompletedGoals">0</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Active Goals</p>
+        <h2 id="reportActiveGoals">0</h2>
+      </div>
     </div>
-  </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <p>Total Saved</p>
+        <h2 id="reportTotalSaved">$0.00</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Total Goal Amount</p>
+        <h2 id="reportTargetAmount">$0.00</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Remaining for Goals</p>
+        <h2 id="reportRemaining">$0.00</h2>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <h2>Income and Expense Report</h2>
+
+      <table class="transaction-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="transactionReportRows"></tbody>
+      </table>
+    </div>
+
+    <div class="dashboard-card">
+      <h2>Goal Progress Report</h2>
+
+      <table class="transaction-table">
+        <thead>
+          <tr>
+            <th>Goal</th>
+            <th>Saved</th>
+            <th>Target</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="goalReportRows"></tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <script>
+    const transactions = JSON.parse(localStorage.getItem("budgetTransactions")) || [];
+    const goals = JSON.parse(localStorage.getItem("budgetGoals")) || [];
+
+    const totalIncome = transactions
+      .filter(transaction => transaction.type === "INCOME")
+      .reduce((sum, transaction) => sum + Number(transaction.amount), 0);
+
+    const totalExpenses = transactions
+      .filter(transaction => transaction.type === "EXPENSE")
+      .reduce((sum, transaction) => sum + Number(transaction.amount), 0);
+
+    const balance = totalIncome - totalExpenses;
+
+    document.getElementById("reportIncome").textContent = `$${totalIncome.toFixed(2)}`;
+    document.getElementById("reportExpenses").textContent = `$${totalExpenses.toFixed(2)}`;
+    document.getElementById("reportBalance").textContent = `$${balance.toFixed(2)}`;
+
+    const totalGoals = goals.length;
+    const completedGoals = goals.filter(goal => goal.complete).length;
+    const activeGoals = totalGoals - completedGoals;
+
+    const totalSaved = goals.reduce((sum, goal) => sum + Number(goal.saved), 0);
+    const targetAmount = goals.reduce((sum, goal) => sum + Number(goal.target), 0);
+    const remaining = Math.max(targetAmount - totalSaved, 0);
+
+    document.getElementById("reportTotalGoals").textContent = totalGoals;
+    document.getElementById("reportCompletedGoals").textContent = completedGoals;
+    document.getElementById("reportActiveGoals").textContent = activeGoals;
+    document.getElementById("reportTotalSaved").textContent = `$${totalSaved.toFixed(2)}`;
+    document.getElementById("reportTargetAmount").textContent = `$${targetAmount.toFixed(2)}`;
+    document.getElementById("reportRemaining").textContent = `$${remaining.toFixed(2)}`;
+
+    const transactionRows = document.getElementById("transactionReportRows");
+
+    if (transactions.length === 0) {
+      transactionRows.innerHTML = `
+        <tr>
+          <td colspan="4">No transactions have been added yet.</td>
+        </tr>
+      `;
+    } else {
+      transactions.forEach(transaction => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${escapeHtml(transaction.date)}</td>
+          <td>${escapeHtml(transaction.desc)}</td>
+          <td>${escapeHtml(transaction.type)}</td>
+          <td>$${Number(transaction.amount).toFixed(2)}</td>
+        `;
+
+        transactionRows.appendChild(tr);
+      });
+    }
+
+    const goalRows = document.getElementById("goalReportRows");
+
+    if (goals.length === 0) {
+      goalRows.innerHTML = `
+        <tr>
+          <td colspan="4">No goals have been added yet.</td>
+        </tr>
+      `;
+    } else {
+      goals.forEach(goal => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${escapeHtml(goal.name)}</td>
+          <td>$${Number(goal.saved).toFixed(2)}</td>
+          <td>$${Number(goal.target).toFixed(2)}</td>
+          <td>${goal.complete ? "Complete" : "Active"}</td>
+        `;
+
+        goalRows.appendChild(tr);
+      });
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
 </body>
 </html>
