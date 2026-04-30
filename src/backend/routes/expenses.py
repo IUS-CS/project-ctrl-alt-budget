@@ -5,9 +5,7 @@ expenses_bp = Blueprint('expenses', __name__)
 
 # temporary in-memory transaction list
 transactions = [
-    {"date": "2026-02-20", "desc": "Paycheck", "type": "INCOME", "amount": 500},
-    {"date": "2026-02-21", "desc": "Rent", "type": "EXPENSE", "amount": 300},
-    {"date": "2026-02-22", "desc": "Gas", "type": "EXPENSE", "amount": 45.5}
+    {"date": "2026-02-20", "desc": "Paycheck", "type": "INCOME", "amount": 1500},
 ]
 
 # GET /expenses — renders the expenses page template
